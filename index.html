@@ -28,24 +28,6 @@
 <script>
   var tests = [
     {
-      description: "reference, should succeed",
-      function: function () {
-        return true
-      }
-    },
-    {
-      description: "reference, should fail",
-      function: function () {
-        return false
-      }
-    },
-    {
-      description: "reference, should throw",
-      function: function () {
-        throw "Oops."
-      }
-    },
-    {
       description: "web3.currentProvider should exists",
       function: function () {
         return web3.currentProvider != undefined;
@@ -71,6 +53,30 @@
       }
     },
   ];
+  // if using <url>#dev we're prepending some tests to verify that
+  // test results are displayed correctly.
+  if (window.location.hash == "#dev") {
+    var references = [
+      {
+        description: "reference, should succeed",
+        function: function () {
+          return true
+        }
+      },
+      {
+        description: "reference, should fail",
+        function: function () {
+          return false
+        }
+      },
+      {
+        description: "reference, should throw",
+        function: function () {
+          throw "Oops."
+        }
+      }];
+    tests = references.concat(tests)
+  }
 
   function test(test) {
     var result = { test: test };
