@@ -1,0 +1,117 @@
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>provider verification</title>
+</head>
+
+<body>
+</body>
+<style>
+  body {
+    font-family: arial;
+  }
+
+  div {
+    padding: 5px;
+    margin-bottom: 2px;
+  }
+
+  .success {
+    background-color: #88ff88;
+  }
+
+  .fail {
+    background-color: #ff8888;
+  }
+</style>
+<script>
+  var tests = [
+    {
+      description: "reference, should succeed",
+      function: function () {
+        return true
+      }
+    },
+    {
+      description: "reference, should fail",
+      function: function () {
+        return false
+      }
+    },
+    {
+      description: "reference, should throw",
+      function: function () {
+        throw "Oops."
+      }
+    },
+    {
+      description: "web3.currentProvider should exists",
+      function: function () {
+        return web3.currentProvider != undefined;
+      }
+    },
+    {
+      description: "sendAsync shouldn't be deletable",
+      function: function () {
+        delete web3.currentProvider.sendAsync;
+        return web3.currentProvider.sendAsync != undefined;
+      }
+    },
+    {
+      description: "send('eth_requestAccounts') should return promise",
+      function: function () {
+        return web3.currentProvider.send('eth_requestAccounts') instanceof Promise;
+      }
+    },
+    {
+      description: "send('eth_getBalance', ['0x0']) should return promise",
+      function: function () {
+        return web3.currentProvider.send('eth_getBalance', ['0x0']) instanceof Promise;
+      }
+    },
+  ];
+
+  function test(test) {
+    var result = { test: test };
+    try {
+      result.ok = test.function();
+    } catch (error) {
+      result.ok = false;
+      result.error = error;
+      console.error(error);
+    }
+    return result;
+  };
+
+  function makeResultElement(result) {
+    var div = document.createElement("div");
+    var desc = document.createElement("p");
+    div.appendChild(desc);
+    desc.innerText = result.test.description;
+    if (result.ok && result.error == undefined) {
+      div.classList.add("success");
+    } else {
+      div.classList.add("fail");
+    }
+    if (result.error) {
+      var errElem = document.createElement("pre");
+      if (result.error.stack != undefined) {
+        errElem.innerText = result.error.stack;
+      } else {
+        errElem.innerText = result.error;
+      }
+      div.appendChild(errElem);
+    }
+    return div;
+  }
+
+  var results = tests.map(test);
+  var passed = results.filter(r => r.ok)
+  var failed = results.filter(r => !r.ok);
+  failed.concat(passed).map(makeResultElement).forEach(e => {
+    document.body.appendChild(e);
+  });
+</script>
+
+</html>
