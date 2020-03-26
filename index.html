@@ -41,15 +41,29 @@
       }
     },
     {
-      description: "send('eth_requestAccounts') should return promise",
-      function: function () {
-        return web3.currentProvider.send('eth_requestAccounts') instanceof Promise;
+      description: "send('eth_requestAccounts') should return promise with account.",
+      function: async function () {
+        const accounts = await web3.currentProvider.send('eth_requestAccounts');
+        // Expecting at least one account.
+        if (accounts.length == 0) {
+          throw "No accounts returned, are you logged in?";
+        }
+        // Expecting 20 bytes + 0x prefix.
+        if (accounts[0].length != 42) {
+          throw `${accounts[0]} doesn't look like an account.`
+        }
+        return true;
       }
     },
     {
-      description: "send('eth_getBalance', ['0x0']) should return promise",
-      function: function () {
-        return web3.currentProvider.send('eth_getBalance', ['0x0']) instanceof Promise;
+      description: "`send(method: String, params?: Array<Any>): Promise` should work as expected.",
+      function: async function () {
+        const promise = web3.currentProvider.send('net_version');
+        if (!(promise instanceof Promise)) {
+          throw "Expected send('net_version') to return Promise."
+        }
+        const version = await promise;
+        return parseInt(version) > 0;
       }
     },
   ];
@@ -78,10 +92,10 @@
     tests = references.concat(tests)
   }
 
-  function test(test) {
+  async function test(test) {
     var result = { test: test };
     try {
-      result.ok = test.function();
+      result.ok = await test.function();
     } catch (error) {
       result.ok = false;
       result.error = error;
@@ -104,6 +118,8 @@
       var errElem = document.createElement("pre");
       if (result.error.stack != undefined) {
         errElem.innerText = result.error.stack;
+      } else if (result.error.message != undefined) {
+        errElem.innerText = result.error.message;
       } else {
         errElem.innerText = result.error;
       }
@@ -112,11 +128,12 @@
     return div;
   }
 
-  var results = tests.map(test);
-  var passed = results.filter(r => r.ok)
-  var failed = results.filter(r => !r.ok);
-  failed.concat(passed).map(makeResultElement).forEach(e => {
-    document.body.appendChild(e);
+  Promise.all(tests.map(test)).then(results => {
+    var passed = results.filter(r => r.ok);
+    var failed = results.filter(r => !r.ok);
+    failed.concat(passed).map(makeResultElement).forEach(e => {
+      document.body.appendChild(e);
+    });
   });
 </script>
 
