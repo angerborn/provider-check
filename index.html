@@ -60,7 +60,8 @@
         if (accounts.length == 0) {
           throw "No accounts returned, are you logged in?";
         }
-        // Expecting 20 bytes + 0x prefix.
+        // Expecting 20 bytes + 0x prefix. As each byte is represented by 2 characters
+        // the total length should be 20 * 2 + 2 = 42
         if (accounts[0].length != 42) {
           throw `${accounts[0]} doesn't look like an account.`
         }
