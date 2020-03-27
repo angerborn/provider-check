@@ -34,6 +34,12 @@
       }
     },
     {
+      description: "`ethereum` should exist",
+      function: function () {
+        return ethereum != undefined && ethereum == web3.currentProvider;
+      }
+    },
+    {
       description: "`ethereum.providerName` should exists",
       function: function () {
         return ethereum.providerName.length != 0;
