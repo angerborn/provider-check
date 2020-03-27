@@ -28,20 +28,20 @@
 <script>
   var tests = [
     {
-      description: "web3.currentProvider should exists",
+      description: "`web3.currentProvider` should exist",
       function: function () {
         return web3.currentProvider != undefined;
       }
     },
     {
-      description: "sendAsync shouldn't be deletable",
+      description: "`sendAsync` shouldn't be deletable",
       function: function () {
         delete web3.currentProvider.sendAsync;
         return web3.currentProvider.sendAsync != undefined;
       }
     },
     {
-      description: "send('eth_requestAccounts') should return promise with account.",
+      description: "`send('eth_requestAccounts')` should return promise with account",
       function: async function () {
         const accounts = await web3.currentProvider.send('eth_requestAccounts');
         // Expecting at least one account.
@@ -56,7 +56,7 @@
       }
     },
     {
-      description: "`send(method: String, params?: Array<Any>): Promise` should work as expected.",
+      description: "`send(method: String, params?: Array<Any>): Promise` should work as expected",
       function: async function () {
         const promise = web3.currentProvider.send('net_version');
         if (!(promise instanceof Promise)) {
