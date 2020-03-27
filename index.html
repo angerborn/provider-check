@@ -26,7 +26,7 @@
   }
 </style>
 <script>
-  var tests = [
+  let tests = [
     {
       description: "`web3.currentProvider` should exist",
       function: () => {
@@ -82,7 +82,7 @@
   // if using <url>#dev we're prepending some tests to verify that
   // test results are displayed correctly.
   if (window.location.hash == "#dev") {
-    var references = [
+    const references = [
       {
         description: "reference, should succeed",
         function: () => {
@@ -105,7 +105,7 @@
   }
 
   async function test(test) {
-    var result = { test: test };
+    const result = { test: test };
     try {
       result.ok = await test.function();
     } catch (error) {
@@ -117,8 +117,8 @@
   };
 
   function makeResultElement(result) {
-    var div = document.createElement("div");
-    var desc = document.createElement("p");
+    const div = document.createElement("div");
+    const desc = document.createElement("p");
     div.appendChild(desc);
     desc.innerText = result.test.description;
     if (result.ok && result.error == undefined) {
@@ -127,7 +127,7 @@
       div.classList.add("fail");
     }
     if (result.error) {
-      var errElem = document.createElement("pre");
+      const errElem = document.createElement("pre");
       if (result.error.stack != undefined) {
         errElem.innerText = result.error.stack;
       } else if (result.error.message != undefined) {
@@ -141,8 +141,8 @@
   }
 
   Promise.all(tests.map(test)).then(results => {
-    var passed = results.filter(r => r.ok);
-    var failed = results.filter(r => !r.ok);
+    const passed = results.filter(r => r.ok);
+    const failed = results.filter(r => !r.ok);
     failed.concat(passed).map(makeResultElement).forEach(e => {
       document.body.appendChild(e);
     });
