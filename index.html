@@ -34,6 +34,12 @@
       }
     },
     {
+      description: "`ethereum.providerName` should exists",
+      function: function () {
+        return ethereum.providerName.length != 0;
+      }
+    },
+    {
       description: "`sendAsync` shouldn't be deletable",
       function: function () {
         delete web3.currentProvider.sendAsync;
