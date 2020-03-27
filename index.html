@@ -29,32 +29,32 @@
   var tests = [
     {
       description: "`web3.currentProvider` should exist",
-      function: function () {
+      function: () => {
         return web3.currentProvider != undefined;
       }
     },
     {
       description: "`ethereum` should exist",
-      function: function () {
+      function: () => {
         return ethereum != undefined && ethereum == web3.currentProvider;
       }
     },
     {
       description: "`ethereum.providerName` should exists",
-      function: function () {
+      function: () => {
         return ethereum.providerName.length != 0;
       }
     },
     {
       description: "`sendAsync` shouldn't be deletable",
-      function: function () {
+      function: () => {
         delete web3.currentProvider.sendAsync;
         return web3.currentProvider.sendAsync != undefined;
       }
     },
     {
       description: "`send('eth_requestAccounts')` should return promise with account",
-      function: async function () {
+      function: async () => {
         const accounts = await web3.currentProvider.send('eth_requestAccounts');
         // Expecting at least one account.
         if (accounts.length == 0) {
@@ -69,7 +69,7 @@
     },
     {
       description: "`send(method: String, params?: Array<Any>): Promise` should work as expected",
-      function: async function () {
+      function: async () => {
         const promise = web3.currentProvider.send('net_version');
         if (!(promise instanceof Promise)) {
           throw "Expected send('net_version') to return Promise."
@@ -85,19 +85,19 @@
     var references = [
       {
         description: "reference, should succeed",
-        function: function () {
+        function: () => {
           return true
         }
       },
       {
         description: "reference, should fail",
-        function: function () {
+        function: () => {
           return false
         }
       },
       {
         description: "reference, should throw",
-        function: function () {
+        function: () => {
           throw "Oops."
         }
       }];
