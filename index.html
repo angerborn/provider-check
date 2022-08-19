@@ -1,153 +1,157 @@
 <html>
 
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>provider verification</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>provider verification</title>
 </head>
 
 <body>
 </body>
 <style>
-  body {
-    font-family: arial;
-  }
+    body {
+        font-family: arial;
+    }
 
-  div {
-    padding: 5px;
-    margin-bottom: 2px;
-  }
+    div {
+        padding: 5px;
+        margin-bottom: 2px;
+    }
 
-  .success {
-    background-color: #88ff88;
-  }
+    .success {
+        background-color: #88ff88;
+    }
 
-  .fail {
-    background-color: #ff8888;
-  }
+    .fail {
+        background-color: #ff8888;
+    }
 </style>
 <script>
-  let tests = [
-    {
-      description: "`web3.currentProvider` should exist",
-      function: () => {
-        return web3.currentProvider != undefined;
-      }
-    },
-    {
-      description: "`ethereum` should exist",
-      function: () => {
-        return ethereum != undefined && ethereum == web3.currentProvider;
-      }
-    },
-    {
-      description: "`ethereum.providerName` should exists",
-      function: () => {
-        return ethereum.providerName.length != 0;
-      }
-    },
-    {
-      description: "`sendAsync` shouldn't be deletable",
-      function: () => {
-        delete web3.currentProvider.sendAsync;
-        return web3.currentProvider.sendAsync != undefined;
-      }
-    },
-    {
-      description: "`send('eth_requestAccounts')` should return promise with account",
-      function: async () => {
-        const accounts = await web3.currentProvider.send('eth_requestAccounts');
-        // Expecting at least one account.
-        if (accounts.length == 0) {
-          throw "No accounts returned, are you logged in?";
-        }
-        // Expecting 20 bytes + 0x prefix. As each byte is represented by 2 characters
-        // the total length should be 20 * 2 + 2 = 42
-        if (accounts[0].length != 42) {
-          throw `${accounts[0]} doesn't look like an account.`
-        }
-        return true;
-      }
-    },
-    {
-      description: "`send(method: String, params?: Array<Any>): Promise` should work as expected",
-      function: async () => {
-        const promise = web3.currentProvider.send('net_version');
-        if (!(promise instanceof Promise)) {
-          throw "Expected send('net_version') to return Promise."
-        }
-        const version = await promise;
-        return parseInt(version) > 0;
-      }
-    },
-  ];
-  // if using <url>#dev we're prepending some tests to verify that
-  // test results are displayed correctly.
-  if (window.location.hash == "#dev") {
-    const references = [
-      {
-        description: "reference, should succeed",
-        function: () => {
-          return true
-        }
-      },
-      {
-        description: "reference, should fail",
-        function: () => {
-          return false
-        }
-      },
-      {
-        description: "reference, should throw",
-        function: () => {
-          throw "Oops."
-        }
-      }];
-    tests = references.concat(tests)
-  }
-
-  async function test(test) {
-    const result = { test: test };
-    try {
-      result.ok = await test.function();
-    } catch (error) {
-      result.ok = false;
-      result.error = error;
-      console.error(error);
+    let tests = [
+        {
+            description: "`web3.currentProvider` should exist",
+            function: () => {
+                return web3.currentProvider != undefined;
+            }
+        },
+        {
+            description: "`ethereum` should exist",
+            function: () => {
+                return ethereum != undefined && ethereum == web3.currentProvider;
+            }
+        },
+        {
+            description: "`ethereum.providerName` should exists",
+            function: () => {
+                return ethereum.providerName.length != 0;
+            }
+        },
+        {
+            description: "`sendAsync` shouldn't be deletable",
+            function: () => {
+                delete web3.currentProvider.sendAsync;
+                return web3.currentProvider.sendAsync != undefined;
+            }
+        },
+        {
+            description: "`send('eth_requestAccounts')` should return promise with account",
+            function: async () => {
+                const accounts = await web3.currentProvider.send('eth_requestAccounts');
+                // Expecting at least one account.
+                if (accounts.length == 0) {
+                    throw "No accounts returned, are you logged in?";
+                }
+                // Expecting 20 bytes + 0x prefix. As each byte is represented by 2 characters
+                // the total length should be 20 * 2 + 2 = 42
+                if (accounts[0].length != 42) {
+                    throw `${accounts[0]} doesn't look like an account.`
+                }
+                return true;
+            }
+        },
+        {
+            description: "`send(method: String, params?: Array<Any>): Promise` should work as expected",
+            function: async () => {
+                const promise = web3.currentProvider.send('net_version');
+                if (!(promise instanceof Promise)) {
+                    throw "Expected send('net_version') to return Promise."
+                }
+                const version = await promise;
+                return parseInt(version) > 0;
+            }
+        },
+    ];
+    // if using <url>#dev we're prepending some tests to verify that
+    // test results are displayed correctly.
+    if (window.location.hash == "#dev") {
+        const references = [
+            {
+                description: "reference, should succeed",
+                function: () => {
+                    return true
+                }
+            },
+            {
+                description: "reference, should fail",
+                function: () => {
+                    return false
+                }
+            },
+            {
+                description: "reference, should throw",
+                function: () => {
+                    throw "Oops."
+                }
+            }];
+        tests = references.concat(tests)
     }
-    return result;
-  };
 
-  function makeResultElement(result) {
-    const div = document.createElement("div");
-    const desc = document.createElement("p");
-    div.appendChild(desc);
-    desc.innerText = result.test.description;
-    if (result.ok && result.error == undefined) {
-      div.classList.add("success");
-    } else {
-      div.classList.add("fail");
-    }
-    if (result.error) {
-      const errElem = document.createElement("pre");
-      if (result.error.stack != undefined) {
-        errElem.innerText = result.error.stack;
-      } else if (result.error.message != undefined) {
-        errElem.innerText = result.error.message;
-      } else {
-        errElem.innerText = result.error;
-      }
-      div.appendChild(errElem);
-    }
-    return div;
-  }
+    async function test(test) {
+        const result = { test: test };
+        try {
+            result.ok = await test.function();
+        } catch (error) {
+            result.ok = false;
+            result.error = error;
+            console.error(error);
+        }
+        return result;
+    };
 
-  Promise.all(tests.map(test)).then(results => {
-    const passed = results.filter(r => r.ok);
-    const failed = results.filter(r => !r.ok);
-    failed.concat(passed).map(makeResultElement).forEach(e => {
-      document.body.appendChild(e);
-    });
-  });
+    function makeResultElement(result) {
+        const div = document.createElement("div");
+        const desc = document.createElement("p");
+        div.appendChild(desc);
+        desc.innerText = result.test.description;
+        if (result.ok && result.error == undefined) {
+            div.classList.add("success");
+        } else {
+            div.classList.add("fail");
+        }
+        if (result.error) {
+            const errElem = document.createElement("pre");
+            if (result.error.stack != undefined) {
+                errElem.innerText = result.error.stack;
+            } else if (result.error.message != undefined) {
+                errElem.innerText = result.error.message;
+            } else {
+                errElem.innerText = result.error;
+            }
+            div.appendChild(errElem);
+        }
+        return div;
+    }
+
+    function runTests() {
+        Promise.all(tests.map(test)).then(results => {
+            const passed = results.filter(r => r.ok);
+            const failed = results.filter(r => !r.ok);
+            failed.concat(passed).map(makeResultElement).forEach(e => {
+                document.body.appendChild(e);
+            });
+        });
+    }
+
+    window.onload = runTests;
 </script>
 
 </html>
