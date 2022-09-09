@@ -141,6 +141,14 @@
         return div;
     }
 
+    function runWhenPossible() {
+        if (window.ethereum !== undefined) {
+            runTests()
+        } else {
+            setTimeout(runWhenPossible, 100)
+        }
+    }
+
     function runTests() {
         Promise.all(tests.map(test)).then(results => {
             const passed = results.filter(r => r.ok);
@@ -151,7 +159,7 @@
         });
     }
 
-    window.onload = runTests;
+    window.onload = runWhenPossible;
 </script>
 
 </html>
