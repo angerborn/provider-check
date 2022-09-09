@@ -53,9 +53,9 @@
             }
         },
         {
-            description: "`send('eth_requestAccounts')` should return promise with account",
+            description: "`request({method: 'eth_requestAccounts'})` should return promise with account",
             function: async () => {
-                const accounts = await web3.currentProvider.send('eth_requestAccounts');
+                const accounts = await web3.currentProvider.request({method: "eth_requestAccounts"});
                 // Expecting at least one account.
                 if (accounts.length == 0) {
                     throw "No accounts returned, are you logged in?";
@@ -69,9 +69,9 @@
             }
         },
         {
-            description: "`send(method: String, params?: Array<Any>): Promise` should work as expected",
+            description: "`request({method: String, params?: Array<Any>}): Promise<Any>` should work as expected",
             function: async () => {
-                const promise = web3.currentProvider.send('net_version');
+                const promise = web3.currentProvider.request({method: "net_version"});
                 if (!(promise instanceof Promise)) {
                     throw "Expected send('net_version') to return Promise."
                 }
